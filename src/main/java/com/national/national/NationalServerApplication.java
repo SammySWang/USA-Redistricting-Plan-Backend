@@ -17,6 +17,8 @@ import java.util.Arrays;
 @SpringBootApplication
 public class NationalServerApplication {
 
+
+
 	public static void main(String[] args) {
 
 		SpringApplication.run(NationalServerApplication.class, args);
@@ -28,6 +30,9 @@ public class NationalServerApplication {
 			JobHandler.loadPlans(state);
 			//JobHandler.loadEnactedPlans(state);
 		}
+//		Job job = new Job("MD");
+//		job.getBoxAndWhiskerPlot("BVAP");
+
 	}
 
 }

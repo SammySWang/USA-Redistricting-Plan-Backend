@@ -18,6 +18,8 @@ public class DistrictPlan {
     public ArrayList<District> districts;
     public HashMap<District.MM, Integer> mm;
     public double popdiff;
+    public double deviationFromAverageEnacted;
+    public double graphCompactness;
     //public static ArrayList<Double> popdiffArrayList = new ArrayList<>();
     public double deviation;
 
@@ -26,6 +28,10 @@ public class DistrictPlan {
         this.mm = new HashMap<>();
         //this.popdiffArrayList = new ArrayList<Double>();
         ArrayList<Integer> vap = new ArrayList<>();
+        //ArrayList<Double> deviationFromAverageEnacted = new ArrayList<>();
+        double devFromAvgEnactedForAllDistrict = 0;
+        double graphCompactnessForAllDistrict = 0;
+        ArrayList<Double> graphCompactness = new ArrayList<>();
         JsonArray districtArray = districtsJson.getAsJsonObject().getAsJsonArray("districts");
         for(JsonElement district: districtArray) {
             JsonObject districtObject = district.getAsJsonObject();
@@ -36,16 +42,34 @@ public class DistrictPlan {
                     precincts.add(precinctArray.get(i).getAsInt());
                 }
             }
-            districts.add(new District(districtObject.get("renumber").getAsInt(), districtObject.get("vap").getAsInt(), districtObject.get("hvap").getAsInt(),
-                    districtObject.get("wvap").getAsInt(), districtObject.get("bvap").getAsInt(), districtObject.get("asianvap").getAsInt(), precincts));
+            districts.add(new District(
+                    districtObject.get("renumber").getAsInt(),
+                    districtObject.get("vap").getAsInt(),
+                    districtObject.get("hvap").getAsInt(),
+                    districtObject.get("wvap").getAsInt(),
+                    districtObject.get("bvap").getAsInt(),
+                    districtObject.get("asianvap").getAsInt(),
+                    precincts));
             vap.add(districtObject.get("vap").getAsInt());
+           // deviationFromAverageEnacted.add(districtObject.get("areadevs").getAsDouble());
+            devFromAvgEnactedForAllDistrict += districtObject.get("areadevs").getAsDouble();
+            graphCompactnessForAllDistrict += districtObject.get("gc").getAsDouble();
         }
         long sum = 0;
         for(int pop: vap) {
             sum += pop;
         }
         //int i = 0;
+        //System.out.println("vap size: "+vap.size());
+        this.graphCompactness = graphCompactnessForAllDistrict/vap.size();
+        this.deviationFromAverageEnacted = devFromAvgEnactedForAllDistrict;
         this.popdiff = (Collections.max(vap) - Collections.min(vap)) / (1.0 * sum / vap.size());
+        //System.out.println("1 - popdiff" + (1 - this.popdiff));
+
+        //System.out.println("population difference: "+this.popdiff);
+        //System.out.println("graph compactness: "+this.graphCompactness);
+        //System.out.println("graph compactness divided by total districts: "+this.graphCompactness/vap.size());
+        //System.out.println("deviation from average enacted in districtings: "+this.deviationFromAverageEnacted);
         //this.popdiffArrayList.add(popdiff);
         //System.out.println(this.districts.size());
         //System.out.println(this.popdiffArrayList.size());

@@ -69,7 +69,6 @@ public class JobController {
         JsonObject cons = gson.fromJson(constraints, JsonObject.class);
         Job job = new Job("MD");
         int remainingDistricts = job.filtering(cons);
-        System.out.println(remainingDistricts);
         job = gson.fromJson(constraints,Job.class);
         job.setRemainingDistricting(remainingDistricts);
         jobrepo.save(job);
@@ -99,6 +98,8 @@ public class JobController {
         return jobHandler.calculateWeights(state,id,weight);
         //return topTenDistrictings;
     }
+
+
 
 //    @PostMapping(path="job/{id}/filter")
 //    public ResponseEntity filter(@PathVariable Long id, @RequestBody String constraints) {

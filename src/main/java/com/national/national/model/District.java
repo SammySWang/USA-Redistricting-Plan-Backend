@@ -9,7 +9,8 @@ public class District {
         WVAP,
         HVAP,
         BVAP,
-        AVAP
+        AVAP,
+
     }
 
     public int districtNum;
@@ -22,7 +23,7 @@ public class District {
     public int MMVAP;
     public ArrayList<Integer> precincts;
 
-    public District(int districtNum, int VAP, int HVAP, int WVAP, int BVAP, int AVAP, ArrayList<Integer> precincts) {
+    public District(int districtNum,int VAP, int HVAP, int WVAP, int BVAP, int AVAP,ArrayList<Integer> precincts) {
         this.districtNum = districtNum;
         this.VAP = VAP;
         this.HVAP = HVAP;

@@ -100,17 +100,34 @@ public class JobHandler {
             //DistrictPlan x = filtered.get(i);
             //System.out.println("check correct equality: "+weight.get("populationEquality").getAsDouble());
             //System.out.println("check correct popdiff: "+filtered.get(i).popdiff);
-            double populationEqualityScore = weight.get("populationEquality").getAsDouble() * filtered.get(i).popdiff;
-            remainingDistricting.add(populationEqualityScore);
+            double userInputPopulationEquality = weight.get("populationEquality").getAsDouble();
+            double userInputDeviationEnacted = weight.get("deviationFromEnacted").getAsDouble();
+            double userInputWeightCompactness = weight.get("weightCompactness").getAsDouble();
+            double populationEqualityScore = userInputPopulationEquality * filtered.get(i).popdiff;
+            double deviationFromEnactedScore = userInputDeviationEnacted * filtered.get(i).deviationFromAverageEnacted;
+            double compactnessScore = userInputWeightCompactness * filtered.get(i).graphCompactness;
+//            System.out.println("   population equality: "+populationEqualityScore);
+//            System.out.println("deviation From enacted: "+ deviationFromEnactedScore);
+//            System.out.println("     compactness score: "+ compactnessScore);
+
+            System.out.println(populationEqualityScore + deviationFromEnactedScore + compactnessScore);
+            System.out.println("After implemented: ");
+            System.out.println((populationEqualityScore + deviationFromEnactedScore + compactnessScore)/(userInputPopulationEquality+userInputDeviationEnacted+userInputWeightCompactness));
+            System.out.println("--------------------------");
+            double objectiveFunctionScore = (populationEqualityScore + deviationFromEnactedScore + compactnessScore);
+            remainingDistricting.add(objectiveFunctionScore);
         }
-        System.out.println("unsort: "+remainingDistricting);
+        //System.out.println("unsort: "+remainingDistricting);
         //now sort it
         ArrayList<Double> unsort = new ArrayList<>(remainingDistricting);
         Collections.sort(remainingDistricting);
-        System.out.println("after sort: "+remainingDistricting);
+        //System.out.println("after sort: "+remainingDistricting);
         //now take the top 10 highest
-        System.out.println("size: "+remainingDistricting.size());
+        //System.out.println("size: "+remainingDistricting.size());
         //System.out.println("should only be ten: "+topTenDistricting.subList(topTenDistricting.size()-10, topTenDistricting.size()));
+
+        //CAUTION: possible index out of bound
+        // what if the remaining is less than 10
         for(int i = 0; i < 10 ; i++){
             //topTenDistricting.add(remainingDistricting.get(remainingDistricting.size()-10+i));
             //in reverse order districting1 - 10
@@ -149,35 +166,42 @@ public class JobHandler {
 
 
     //static methods
-    public static void loadEnactedPlans(String state) {
-        String path = "src/main/resources/plans/" + state + "_enacted.json";
-        ArrayList<District> enacted_districts = new ArrayList<>();
-        try {
-            JsonObject jobj = new Gson().fromJson(new FileReader(path), JsonObject.class);
-            int cur = 0;
-            for(String key: jobj.keySet()) {
-                JsonObject districtObject = jobj.get(key).getAsJsonObject();
-                JsonArray precinctArray = districtObject.getAsJsonArray("precincts");
-                ArrayList<Integer> precincts = new ArrayList<>();
-                if (precinctArray != null) {
-                    for (int i=0;i<precinctArray.size();i++){
-                        precincts.add(precinctArray.get(i).getAsInt());
-                    }
-                }
-                enacted_districts.add(new District(cur, districtObject.get("vap").getAsInt(), districtObject.get("hvap").getAsInt(),
-                        districtObject.get("wvap").getAsInt(), districtObject.get("bvap").getAsInt(), districtObject.get("asainvap").getAsInt(), precincts));
-                cur ++;
-            }
-            System.out.println(enacted_districts.size() + " districts loaded from enacted plan");
-            enacted.put(state, enacted_districts);
-        }
-        catch(Exception e) {
-            System.out.println("Error " + e);
-        }
-    }
+//    public static void loadEnactedPlans(String state) {
+//        String path = "src/main/resources/plans/" + state + "_enacted.json";
+//        ArrayList<District> enacted_districts = new ArrayList<>();
+//        try {
+//            JsonObject jobj = new Gson().fromJson(new FileReader(path), JsonObject.class);
+//            int cur = 0;
+//            for(String key: jobj.keySet()) {
+//                JsonObject districtObject = jobj.get(key).getAsJsonObject();
+//                JsonArray precinctArray = districtObject.getAsJsonArray("precincts");
+//                ArrayList<Integer> precincts = new ArrayList<>();
+//                if (precinctArray != null) {
+//                    for (int i=0;i<precinctArray.size();i++){
+//                        precincts.add(precinctArray.get(i).getAsInt());
+//                    }
+//                }
+//                enacted_districts.add(new District(
+//                        cur,
+//                        districtObject.get("vap").getAsInt(),
+//                        districtObject.get("hvap").getAsInt(),
+//                        districtObject.get("wvap").getAsInt(),
+//                        districtObject.get("bvap").getAsInt(),
+//                        districtObject.get("asainvap").getAsInt(),
+//                        precincts));
+//                cur ++;
+//            }
+//            System.out.println(enacted_districts.size() + " districts loaded from enacted plan");
+//            enacted.put(state, enacted_districts);
+//        }
+//        catch(Exception e) {
+//            System.out.println("Error " + e);
+//        }
+//    }
     public static void loadPlans(String state) {
-        String path = "src/main/resources/plans/"+ state + "_plans_1.json";
-
+        //String path = "src/main/resources/plans/"+ state + "_plans_1.json";
+        String path = "src/main/resources/plans/"+ state + "_510_final.json";
+        //String path = "src/main/resources/plans/"+state +"_3705.json";
         ArrayList<DistrictPlan> district_plans = new ArrayList<>();
         try {
             //we convert the path to jsonobject
@@ -185,6 +209,7 @@ public class JobHandler {
             //now we can get jsonobject and their array
             JsonArray arr = jobj.getAsJsonObject().getAsJsonArray("plans");
             for(JsonElement element: arr) {
+                //System.out.println("ss");
                 DistrictPlan plan = new DistrictPlan(element);
                 district_plans.add(plan);
             }

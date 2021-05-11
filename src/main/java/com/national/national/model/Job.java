@@ -1,14 +1,17 @@
 package com.national.national.model;
 
+import com.google.common.math.Quantiles;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.national.national.handler.JobHandler;
-import com.national.national.repository.JobRepository;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 
 //import static com.national.national.model.DistrictPlan.mm;
 
@@ -44,6 +47,7 @@ public class Job {
     public Job(){
        this("MD");
     }
+
 
     public Job(String state) {
         this.state = state;
@@ -82,18 +86,99 @@ public class Job {
         //*****this will clear remaining districting to 0 when selecting different states
         this.filtered.clear();
         //*****consider better implementation
-
+        System.out.println("Start filtering...");
+        //can i say job.districtPlans? if I moved this function to jobHandler
         for (DistrictPlan plan : this.districtPlans) {
             // Majority minority type to be implement
             // compactness to be implement
             // incumbents to be implement
-            if(plan.popdiff < cons.get("populationDifference").getAsDouble()/100) {
-                //plan.popdiff
+            //System.out.println("plan graph:"+plan.graphCompactness);
+            if(plan.graphCompactness > cons.get("compactness").getAsDouble() && plan.popdiff < cons.get("populationDifference").getAsDouble()/100) {
+
                 this.filtered.add(plan);
             }
         }
+        System.out.println("Remaining Districtings: "+this.filtered.size());
         //System.out.println(filtered.get(0));
         return this.filtered.size();
+    }
+
+    ////////////////////////////5/10 changes
+
+    public String getBoxAndWhiskerPlot(String minority) {
+        //this should be districting use selects, top 10 districting 1
+        //i should save top 10 to the database too
+        //this will makes get by state and id easier.
+        //int x = districtPlans.get(0).districts.get(0).VAP;
+        int districtNum = districtPlans.get(0).districts.size();//top 1:3121,top2:334
+        ArrayList<ArrayList<Integer>> plotData = new ArrayList<>();
+        HashMap<Integer, ArrayList<Integer>> plot = new HashMap<>();
+        for(int i = 0; i < districtNum; i++) {
+            plotData.add(new ArrayList<>());
+        }
+        int cur;//what is this
+        for(DistrictPlan plan: districtPlans) {
+            cur = 0;
+            for(District district: plan.districts) {
+                int pop = 0;
+                //int total = 0;
+                switch (minority) {
+                    case "BVAP":
+                        pop = district.BVAP;
+                        //total += district.VAP;
+                        break;
+                    case "WVAP":
+                        pop = district.WVAP;
+                        break;
+                    case "HVAP":
+                        pop = district.HVAP;
+                        break;
+                    default:
+                        break;
+                }
+                plotData.get(cur).add(pop);
+
+//                plotData.get(cur).add(pop/total);
+//                System.out.println("pop: "+pop);
+//                System.out.println("total: "+total);
+//                System.out.println("pop/total: "+Double.valueOf(pop)/Double.valueOf(total));
+//                System.out.println("--------------------------");
+                cur ++;
+            }
+        }
+        System.out.println("Finish adding pop data. Check " + plotData.get(0).size());
+        cur = 0;
+
+        System.out.println("total");
+        for(ArrayList<Integer> id: plotData) {
+            int min = Collections.min(id);
+            int max = Collections.max(id);
+            int q1 = districtPlans.size() / 4;
+            //int q1 = id.size() /4;
+            int q2 = q1 * 2;
+            int q3 = q1 * 3;
+            //System.out.println("before sort: "+id);
+            Collections.sort(id);//why sort?
+            //System.out.println("after sort: "+id);
+            //System.out.println("this is id: "+id);
+            System.out.println("this is id: "+id);
+            System.out.println("this is id size: "+id.size());
+            System.out.println("this is min: "+min);
+            System.out.println("this is id 1: "+id.get(q1));
+            System.out.println("this is id 2: "+id.get(q2));
+            System.out.println("this is id 3: "+id.get(q3));
+            System.out.println("this is max: "+max);
+            System.out.println("---------------------------");
+            plot.put(cur, new ArrayList<>(Arrays.asList(min, id.get(q1), id.get(q2), id.get(q3), max)));
+            //plot.put(cur, new ArrayList<>(Arrays.asList(min, q1, q2, q3, max)));
+            //Collections.sort(id);
+            cur ++;
+
+        }
+        System.out.println("Plot is ready, check " + plot.size());
+        System.out.println("this is plot data: "+plot);
+
+        return new Gson().toJson(plot);
     }
 
 }
