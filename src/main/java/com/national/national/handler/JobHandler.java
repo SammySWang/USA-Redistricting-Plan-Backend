@@ -110,17 +110,18 @@ public class JobHandler {
 //            System.out.println("deviation From enacted: "+ deviationFromEnactedScore);
 //            System.out.println("     compactness score: "+ compactnessScore);
 
-            System.out.println(populationEqualityScore + deviationFromEnactedScore + compactnessScore);
-            System.out.println("After implemented: ");
-            System.out.println((populationEqualityScore + deviationFromEnactedScore + compactnessScore)/(userInputPopulationEquality+userInputDeviationEnacted+userInputWeightCompactness));
-            System.out.println("--------------------------");
+            //System.out.println(populationEqualityScore + deviationFromEnactedScore + compactnessScore);
+            //System.out.println("After implemented: ");
+            //System.out.println((populationEqualityScore + deviationFromEnactedScore + compactnessScore)/(userInputPopulationEquality+userInputDeviationEnacted+userInputWeightCompactness));
+            //System.out.println("--------------------------");
             double objectiveFunctionScore = (populationEqualityScore + deviationFromEnactedScore + compactnessScore);
+            //double objectiveFunctionScore = (populationEqualityScore + deviationFromEnactedScore + compactnessScore)/(userInputPopulationEquality+userInputDeviationEnacted+userInputWeightCompactness);
             remainingDistricting.add(objectiveFunctionScore);
         }
-        //System.out.println("unsort: "+remainingDistricting);
         //now sort it
         ArrayList<Double> unsort = new ArrayList<>(remainingDistricting);
         Collections.sort(remainingDistricting);
+        //System.out.println("unsort: "+unsort);
         //System.out.println("after sort: "+remainingDistricting);
         //now take the top 10 highest
         //System.out.println("size: "+remainingDistricting.size());
@@ -134,34 +135,46 @@ public class JobHandler {
             topTenDistricting.add(remainingDistricting.get(remainingDistricting.size()-1-i));
         }
         //double first = topTenDistricting.get(0);
-        System.out.println("top 1 position: "+unsort.indexOf(topTenDistricting.get(0)));
-        System.out.println("top 2 position: "+unsort.indexOf(topTenDistricting.get(1)));
-
+        ArrayList<Integer> topTenDistrictingIndex = new ArrayList<>();
+        for(int i = 0; i < 10; i++){
+            topTenDistrictingIndex.add(unsort.indexOf(topTenDistricting.get(i)));
+        }
+        int top1 = unsort.indexOf(topTenDistricting.get(0));
+        int top2 = unsort.indexOf(topTenDistricting.get(1));
+        System.out.println("top 1 position: "+top1);
+        System.out.println("top 2 position: "+top2);
+        System.out.println("All top 10 index: "+topTenDistrictingIndex);
         System.out.println("top 10: "+topTenDistricting);
+
+        //now try to get the actual top 10 districtplan objects and try to retrieves their inside info
+//        System.out.println(districtPlans.get("MD").size());//5500
+//        System.out.println(districtPlans.get("MD").get(top1));//the actual plans
+        //System.out.println(districtPlans.get("MD").get(top1).deviationFromAverageEnacted*0.5);
+//        System.out.println(filtered.get(top1).deviationFromAverageEnacted*0.5);
+//        System.out.println(filtered.get(top1).graphCompactness*0.5);
+//        System.out.println(filtered.get(top1).popdiff*0.5);
+        //System.out.println(districtPlans.get("MD").get(top1).districts.get(0).VAP);
+        //System.out.println(districtPlans.get("MD").get(top1).districts.get(0).BVAP);
+        //System.out.println(districtPlans.get("MD").get(top1));
+        for(int i = 0; i < 10;i++){
+            topTenDistricting.add(0.0);
+        }
+        for(int i = 0; i < 10;i++){
+            topTenDistricting.add(filtered.get(topTenDistrictingIndex.get(i)).deviationFromAverageEnacted);
+        }
+        for(int i = 0; i < 10;i++){
+            topTenDistricting.add(filtered.get(topTenDistrictingIndex.get(i)).popdiff);
+        }
+        for(int i = 0; i < 10;i++){
+            topTenDistricting.add(filtered.get(topTenDistrictingIndex.get(i)).graphCompactness);
+        }
+
+        //System.out.println(topTenDistricting.size());
+        //System.out.println(topTenDistricting);
+        //System.out.println("----------");
+        job.getBoxAndWhiskerPlot("bvap");
         return topTenDistricting;
     }
-
-
-//    public int filtering(JsonObject cons) {
-//        //this.filtered = new ArrayList<>();
-//        //System.out.println("Im inside filtered");
-//        //System.out.println(cons);
-//        int i = 0;
-//        for (DistrictPlan plan : this.districtPlans) {
-//            // Majority minority type to be implement
-//            // compactness to be implement
-//            // incumbents to be implement
-//            if(plan.popdiffArrayList.get(i) < cons.get("populationDifference").getAsDouble()/100) {
-//                this.filtered.add(plan);
-//            }
-//            i+=1;
-//        }
-//
-//        System.out.println(filtered.get(0));
-//        return this.filtered.size();
-//    }
-
-
 
 
 
@@ -200,8 +213,8 @@ public class JobHandler {
 //    }
     public static void loadPlans(String state) {
         //String path = "src/main/resources/plans/"+ state + "_plans_1.json";
-        String path = "src/main/resources/plans/"+ state + "_510_final.json";
-        //String path = "src/main/resources/plans/"+state +"_3705.json";
+        //String path = "src/main/resources/plans/"+ state + "_510_final.json";
+        String path = "src/main/resources/plans/"+state +"_512_final.json";
         ArrayList<DistrictPlan> district_plans = new ArrayList<>();
         try {
             //we convert the path to jsonobject

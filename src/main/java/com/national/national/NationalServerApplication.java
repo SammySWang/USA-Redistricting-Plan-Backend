@@ -27,11 +27,12 @@ public class NationalServerApplication {
 		ArrayList<String> states = new ArrayList<>(Arrays.asList("MD"));//MD, VA, WA
 		//System.out.println(states);
 		for(String state: states) {
+
 			JobHandler.loadPlans(state);
 			//JobHandler.loadEnactedPlans(state);
 		}
-//		Job job = new Job("MD");
-//		job.getBoxAndWhiskerPlot("BVAP");
+		//Job job = new Job("MD");
+		//job.getBoxAndWhiskerPlot("BVAP");
 
 	}
 

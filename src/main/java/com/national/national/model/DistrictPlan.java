@@ -10,11 +10,13 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class DistrictPlan {
 
     public String state;
+    public static HashMap<String, DistrictPlan> enacts;
     public ArrayList<District> districts;
     public HashMap<District.MM, Integer> mm;
     public double popdiff;
@@ -74,6 +76,7 @@ public class DistrictPlan {
         //System.out.println(this.districts.size());
         //System.out.println(this.popdiffArrayList.size());
         //System.out.println(this.popdiff);
+        this.districts.sort(Comparator.comparingDouble(o->o.districtNum));
         findMM();
     }
 

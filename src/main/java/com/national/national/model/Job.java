@@ -110,27 +110,30 @@ public class Job {
         //i should save top 10 to the database too
         //this will makes get by state and id easier.
         //int x = districtPlans.get(0).districts.get(0).VAP;
-        int districtNum = districtPlans.get(0).districts.size();//top 1:3121,top2:334
+        //int districtNum = districtPlans.get(0).districts.size();//top 1:3121,top2:334
+        int districtNum = this.filtered.get(0).districts.size();
+        System.out.println("Getting Box plot...");
+        System.out.println("districtNum from box plot: "+districtNum);
         ArrayList<ArrayList<Integer>> plotData = new ArrayList<>();
         HashMap<Integer, ArrayList<Integer>> plot = new HashMap<>();
         for(int i = 0; i < districtNum; i++) {
             plotData.add(new ArrayList<>());
         }
         int cur;//what is this
-        for(DistrictPlan plan: districtPlans) {
+        for(DistrictPlan plan: this.filtered) {
             cur = 0;
             for(District district: plan.districts) {
                 int pop = 0;
                 //int total = 0;
                 switch (minority) {
-                    case "BVAP":
+                    case "bvap":
                         pop = district.BVAP;
                         //total += district.VAP;
                         break;
-                    case "WVAP":
+                    case "wvap":
                         pop = district.WVAP;
                         break;
-                    case "HVAP":
+                    case "hvap":
                         pop = district.HVAP;
                         break;
                     default:
@@ -149,11 +152,11 @@ public class Job {
         System.out.println("Finish adding pop data. Check " + plotData.get(0).size());
         cur = 0;
 
-        System.out.println("total");
+        //System.out.println("total");
         for(ArrayList<Integer> id: plotData) {
             int min = Collections.min(id);
             int max = Collections.max(id);
-            int q1 = districtPlans.size() / 4;
+            int q1 = this.filtered.size() / 4;
             //int q1 = id.size() /4;
             int q2 = q1 * 2;
             int q3 = q1 * 3;
@@ -173,7 +176,6 @@ public class Job {
             //plot.put(cur, new ArrayList<>(Arrays.asList(min, q1, q2, q3, max)));
             //Collections.sort(id);
             cur ++;
-
         }
         System.out.println("Plot is ready, check " + plot.size());
         System.out.println("this is plot data: "+plot);
