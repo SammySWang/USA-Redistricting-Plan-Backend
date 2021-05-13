@@ -168,13 +168,19 @@ public class JobHandler {
         for(int i = 0; i < 10;i++){
             topTenDistricting.add(filtered.get(topTenDistrictingIndex.get(i)).graphCompactness);
         }
-
+        for(int i = 0; i < 10; i++){
+            topTenDistricting.add((topTenDistrictingIndex.get(i)*1.0));
+        }
+        System.out.println(topTenDistricting);
+        System.out.println("final size: "+topTenDistricting.size());
         //System.out.println(topTenDistricting.size());
         //System.out.println(topTenDistricting);
         //System.out.println("----------");
-        job.getBoxAndWhiskerPlot("bvap");
+        //job.getBoxAndWhiskerPlot("bvap");
         return topTenDistricting;
     }
+
+
 
 
 
@@ -214,7 +220,7 @@ public class JobHandler {
     public static void loadPlans(String state) {
         //String path = "src/main/resources/plans/"+ state + "_plans_1.json";
         //String path = "src/main/resources/plans/"+ state + "_510_final.json";
-        String path = "src/main/resources/plans/"+state +"_512_final.json";
+        String path = "src/main/resources/plans/"+state +"_510_final.json";
         ArrayList<DistrictPlan> district_plans = new ArrayList<>();
         try {
             //we convert the path to jsonobject

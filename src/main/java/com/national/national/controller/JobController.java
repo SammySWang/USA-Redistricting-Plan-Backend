@@ -99,6 +99,13 @@ public class JobController {
         //return topTenDistrictings;
     }
 
+    @GetMapping(path="job/{districtings}/plot")
+    public ArrayList<Double> getBoxPlot(@PathVariable int districtings){
+        System.out.println("retrieving correct districting indx: "+districtings);
+        Job x = new Job("MD");
+        return x.getBoxAndWhiskerPlot(districtings);
+    }
+
 
 
 //    @PostMapping(path="job/{id}/filter")

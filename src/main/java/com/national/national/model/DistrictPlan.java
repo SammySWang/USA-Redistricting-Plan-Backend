@@ -76,7 +76,8 @@ public class DistrictPlan {
         //System.out.println(this.districts.size());
         //System.out.println(this.popdiffArrayList.size());
         //System.out.println(this.popdiff);
-        this.districts.sort(Comparator.comparingDouble(o->o.districtNum));
+        this.districts.sort(Comparator.comparingInt(o->o.districtNum));
+
         findMM();
     }
 
