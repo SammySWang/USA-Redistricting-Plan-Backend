@@ -8,6 +8,7 @@ import com.national.national.handler.JobHandler;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.lang.reflect.Array;
 import java.util.*;
 
 //import static com.national.national.model.DistrictPlan.mm;
@@ -103,16 +104,21 @@ public class Job {
 
     ////////////////////////////5/10 changes
 
-    public ArrayList<Double> getBoxAndWhiskerPlot(int districting) {
+    public AllBoxPlotResults getBoxAndWhiskerPlot(int districting) {
         //this should be districting use selects, top 10 districting 1
         //i should save top 10 to the database too
         //this will makes get by state and id easier.
         int districtNum = this.filtered.get(districting).districts.size();
-        String x = "";
-        for(int i =0 ;i < districtNum; i++){
-            x+=this.filtered.get(districting).districts.get(i).precincts;
-        }
-        System.out.println(x);
+
+        ///
+
+
+        ///
+//        String x = "";
+//        for(int i =0 ;i < districtNum; i++){
+//            x+=this.filtered.get(districting).districts.get(i).precincts;
+//        }
+//        System.out.println(x);
         System.out.println("Getting Box plot...");
         ArrayList<ArrayList<Integer>> plotData = new ArrayList<>();
         HashMap<Integer, ArrayList<Integer>> plot = new HashMap<>();
@@ -171,21 +177,83 @@ public class Job {
         //ArrayList<> districtData = new ArrayList();
         //HashMap<String,String> ww = new HashMap();
 
-        List<List> listOfMixedTypes = new ArrayList<List>();
-        for(int i = 0; i < districtNum;i++){
-            //ww.put("title","district"+(i+1));
-            System.out.println("district :"+(i+1));
-            System.out.println("voting population: "+this.filtered.get(districting).districts.get(i).VAP);
-            System.out.println("BVAP: "+this.filtered.get(districting).districts.get(i).BVAP);
-            System.out.println("HVAP: "+this.filtered.get(districting).districts.get(i).HVAP);
-            System.out.println();
-            //listOfMixedTypes.add()
 
+        //
+//      const DistrictData = [
+//              {
+//                    title: "District1",
+//                    key: "District1",
+//                      dataSource: [
+//                                { title: "Population", count: 583504 },
+//                                { title: "Voting Population", count: 388279 },
+//                                { title: "African American Population", count: 73156 },
+//                                { title: "Hispanic Population", count: 164413 },
+//                                    ],
+//        }
+//        ]
+        //
+
+        //List<List> listOfMixedTypes = new ArrayList<List>();
+        List<DistrictParent> w = new ArrayList<>();
+        //DistrictParent districtParent = new DistrictParent();
+        for(int i = 0; i < districtNum; i++){
+            DistrictParent districtParent = new DistrictParent();
+            districtParent.setTitle("District"+(i+1));
+            districtParent.setKey("District"+(i+1));
+            List<DistrictChild> dataSource = new ArrayList<>();
+//            for(int j = 0; j < 3;j++){
+//                DistrictChild districtChild = new DistrictChild();
+//                districtChild.setTitle("Voting Population");
+//                districtChild.setCount(this.filtered.get(districting).districts.get(i).VAP);
+//                dataSource.add(districtChild);
+//            }
+            DistrictChild districtChild = new DistrictChild();
+            DistrictChild districtChild1 = new DistrictChild();
+            DistrictChild districtChild2 = new DistrictChild();
+            districtChild.setTitle("Voting Population");
+            districtChild.setCount(this.filtered.get(districting).districts.get(i).VAP);
+            districtChild1.setTitle("BVAP");
+            districtChild1.setCount(this.filtered.get(districting).districts.get(i).BVAP);
+            districtChild2.setTitle("HVAP");
+            districtChild2.setCount(this.filtered.get(districting).districts.get(i).HVAP);
+            dataSource.add(districtChild);
+            dataSource.add(districtChild1);
+            dataSource.add(districtChild2);
+            districtParent.setDataSource(dataSource);
+            w.add(districtParent);
         }
-        //System.out.println(ww);
-        System.out.println("-------------------------------");
 
-        return new ArrayList<Double>();
+//        for(int i = 0; i < w.size();i++){
+//            System.out.println(w.get(i).getTitle());
+//            System.out.println(w.get(i).getKey());
+//            System.out.println(w.get(i).getDataSource());
+//            System.out.println();
+//        }
+        List<MinorityData> minorityDataList = new ArrayList<>();
+        MinorityData minorityData = new MinorityData();
+        minorityData.setId(1);
+        minorityData.setDistrictNumber(2);
+        minorityData.setTotalPopulation(202020);
+        minorityDataList.add(minorityData);
+
+        List<BoxPlotData> boxPlotDataList = new ArrayList<>();
+        BoxPlotData boxPlotData = new BoxPlotData();
+        for(int i = 0; i < plot.size();i++){
+            System.out.println("index:"+i+" "+plot.get(i));
+            //boxPlotData.setUnused(plot.get(i));
+
+            boxPlotDataList.add(boxPlotData);
+        }
+        System.out.println(boxPlotDataList);
+
+        AllBoxPlotResults allBoxPlotResults = new AllBoxPlotResults();
+        allBoxPlotResults.setDistrictParentList(w);
+        allBoxPlotResults.setMinorityDataList(minorityDataList);
+
+        allBoxPlotResults.setBox(plot);
+        //System.out.println("this is what we return to client "+w);
+        //return w; just the district Data
+        return allBoxPlotResults;
     }
 
 }

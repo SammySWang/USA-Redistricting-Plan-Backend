@@ -5,9 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.national.national.handler.JobHandler;
-import com.national.national.model.District;
-import com.national.national.model.DistrictPlan;
-import com.national.national.model.Job;
+import com.national.national.model.*;
 import com.national.national.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,7 +98,7 @@ public class JobController {
     }
 
     @GetMapping(path="job/{districtings}/plot")
-    public ArrayList<Double> getBoxPlot(@PathVariable int districtings){
+    public AllBoxPlotResults getBoxPlot(@PathVariable int districtings){
         System.out.println("retrieving correct districting indx: "+districtings);
         Job x = new Job("MD");
         return x.getBoxAndWhiskerPlot(districtings);
